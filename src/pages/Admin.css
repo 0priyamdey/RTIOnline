@@ -1,0 +1,169 @@
+/* src/pages/Admin.css */
+
+/* Wrapper for the login card, responsible for centering */
+.admin-login-wrapper {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Login Card Styling */
+.login-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border-top: 5px solid #007bff;
+    box-sizing: border-box; /* Keep this - it's good! */
+}
+
+.card-title {
+    font-size: 1.8em;
+    margin-bottom: 25px;
+    color: #333;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    /* NEW: Ensure the input-group itself takes full width of its parent (.login-card content area) */
+    width: 100%;
+    box-sizing: border-box; /* NEW: Include padding/border in its width */
+}
+
+.input-group input {
+    width: 100%; /* CHANGE: Make input fill its parent's width */
+    padding: 12px 15px;
+    /* align-self: center; */ /* Remove this, not needed with width: 100% and flex parent */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box; /* CRUCIAL NEW: Include padding and border within the 100% width */
+}
+
+/* If you have input icons, add this: */
+/*
+.input-group .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 1.1em;
+}
+.input-group input {
+    padding-left: 40px; // Add space for icon
+}
+*/
+
+.captcha-group {
+    margin-bottom: 20px;
+    text-align: left; /* Keep this */
+    /* NEW: Ensure the captcha-group also takes full width of its parent */
+    width: 100%;
+    box-sizing: border-box; /* NEW: Include padding/border in its width */
+}
+
+.captcha-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 15px;
+    margin-bottom: 10px;
+    /* NEW: Make captcha-display take full width */
+    width: 100%;
+    box-sizing: border-box; /* NEW: Include padding/border in its width */
+}
+
+.captcha-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #444;
+    letter-spacing: 2px;
+    user-select: none;
+}
+
+.refresh-captcha {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+}
+
+.refresh-captcha:hover {
+    color: #0056b3;
+}
+
+.refresh-captcha img {
+    height: 18px;
+}
+
+.captcha-group input {
+    width: 100%; /* CHANGE: Make captcha input fill its parent's width */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    outline: none;
+    box-sizing: border-box; /* CRUCIAL NEW: Include padding and border within the 100% width */
+}
+
+.login-button {
+    width: 100%; /* Ensure button also spans full width */
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #0056b3;
+}
+
+.forgot-password {
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.forgot-password a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments for login card (optional) */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 20px;
+        margin: 10px;
+    }
+    .captcha-text {
+        font-size: 1.2em;
+    }
+}

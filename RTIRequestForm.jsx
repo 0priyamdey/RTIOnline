@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const RTIRequestForm = () => {
   const CAPTCHA_TEXT = "7Odbx4";
 
   const [formData, setFormData] = useState({
-    department: "Agriculture",
+    department: "",
     name: "Test",
     gender: "Male",
     address1: "Dhaleswar",
@@ -12,8 +13,8 @@ const RTIRequestForm = () => {
     address3: "Agartala",
     pincode: "799007",
     country: "India",
-    state: "Tripura",
-    district: "West Tripura",
+    state: "",
+    district: "",
     education: "Literate",
     phone: "0381230584",
     mobile: "9999999999",
@@ -28,6 +29,35 @@ const RTIRequestForm = () => {
   const [charCount, setCharCount] = useState(formData.rtiText.length);
   const [fileError, setFileError] = useState("");
   const [captchaError, setCaptchaError] = useState("");
+
+  const [departments, setDepartments] = useState([]);
+  const [states, setStates] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [countries, setCountries] = useState([]);
+
+  // Fetch initial dropdown data
+  useEffect(() => {
+    axios.get("http://localhost:8080/GetCountryList")
+      .then((res) => setCountries(res.data))
+      .catch(console.error);
+
+    axios.get("http://localhost:8080/GetStateList")
+      .then((res) => setStates(res.data))
+      .catch(console.error);
+
+    axios.get("http://localhost:8080/rti-master/GetDepartmentList")
+      .then((res) => setDepartments(res.data))
+      .catch(console.error);
+  }, []);
+
+  // Fetch district list on state change
+  useEffect(() => {
+    if (formData.state) {
+      axios.get(`http://localhost:8080/GetDistrictList?state_code=${formData.state}`)
+        .then((res) => setDistricts(res.data))
+        .catch(console.error);
+    }
+  }, [formData.state]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -52,16 +82,14 @@ const RTIRequestForm = () => {
       return;
     }
     setCaptchaError("");
-    alert("RTI Request Submitted Successfully ✅");
+    alert("RTI Request Submitted ✅");
   };
 
-  const handleReset = () => {
-    window.location.reload();
-  };
+  const handleReset = () => window.location.reload();
 
   const Label = ({ text, required }) => (
     <label className="font-bold whitespace-nowrap">
-      {required && <span className="text-red-600">*</span>} {text}
+      {required && <span className="text-red-600">*</span>} <span className="text-black">{text}</span>
     </label>
   );
 
@@ -79,10 +107,9 @@ const RTIRequestForm = () => {
         <span className="text-gray-700 ml-2">Note: Fields marked with * are Mandatory.</span>
       </p>
 
+      {/* PUBLIC AUTHORITY DETAILS */}
       <div className="mb-4">
-        <label className="text-blue-700 font-semibold block mb-1">
-          Public Authority Details:
-        </label>
+        <label className="text-blue-700 font-semibold block mb-1">Public Authority Details:</label>
         <div className="grid grid-cols-2 gap-2 items-center border p-2">
           <Label text="Select Department/Public Authority" required />
           <select
@@ -92,125 +119,92 @@ const RTIRequestForm = () => {
             className="w-full border p-2 rounded"
           >
             <option value="">Select</option>
-            <option value="Agriculture">Agriculture</option>
+            {departments.map((dept, index) => (
+              <option key={index} value={dept.departmentCode}>
+                {dept.departmentName}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
+      {/* PERSONAL DETAILS */}
       <div className="border border-gray-300 p-4 rounded mb-6">
-        <h3 className="text-blue-700 font-semibold mb-4 text-lg">
-          Personal Details of RTI Applicant:-
-        </h3>
-
+        <h3 className="text-blue-700 font-semibold mb-4 text-lg">Personal Details of RTI Applicant:-</h3>
         <div className="grid grid-cols-1 gap-2">
-          {[{ label: "Name", name: "name", required: true, type: "text" }].map((field) => (
-            <div className="grid grid-cols-2 border">
-              <div className="p-2">
-                <Label text={field.label} required={field.required} />
-              </div>
-              <div className="p-2">
-                <input
-                  type={field.type}
-                  name={field.name}
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                  className="w-full border p-2 rounded"
-                />
-              </div>
-            </div>
-          ))}
-
+          {/* Name */}
           <div className="grid grid-cols-2 border">
+            <div className="p-2"><Label text="Name" required /></div>
             <div className="p-2">
-              <Label text="Gender" />
-            </div>
-            <div className="p-2">
-              <label className="mr-4">
-                <input type="radio" name="gender" value="Male" checked={formData.gender === 'Male'} onChange={handleChange} /> Male
-              </label>
-              <label>
-                <input type="radio" name="gender" value="Female" checked={formData.gender === 'Female'} onChange={handleChange} /> Female
-              </label>
+              <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border p-2 rounded" />
             </div>
           </div>
 
+          {/* Gender */}
           <div className="grid grid-cols-2 border">
+            <div className="p-2"><Label text="Gender" /></div>
             <div className="p-2">
-              <Label text="Address" required />
-            </div>
-            <div className="p-2">
-              {["address1", "address2", "address3"].map((line) => (
-                <input
-                  key={line}
-                  type="text"
-                  name={line}
-                  value={formData[line]}
-                  onChange={handleChange}
-                  className="w-full border p-2 rounded mb-1"
-                />
+              {["Male", "Female"].map((g) => (
+                <label key={g} className="mr-4">
+                  <input type="radio" name="gender" value={g} checked={formData.gender === g} onChange={handleChange} /> {g}
+                </label>
               ))}
             </div>
           </div>
 
-          {["pincode", "country", "state", "district", "education", "phone", "mobile", "email"].map((field) => (
-            <div key={field} className="grid grid-cols-2 border">
+          {/* Address */}
+          <div className="grid grid-cols-2 border">
+            <div className="p-2"><Label text="Address" required /></div>
+            <div className="p-2">
+              {["address1", "address2", "address3"].map((line) => (
+                <input key={line} type="text" name={line} value={formData[line]} onChange={handleChange} className="w-full border p-2 rounded mb-1" />
+              ))}
+            </div>
+          </div>
+
+          {/* Pincode, Country, State, District */}
+          {[
+            { key: "pincode", label: "Pincode" },
+            { key: "country", label: "Country", type: "radio", options: countries.map(c => c.countryName) },
+            { key: "state", label: "State", type: "select", options: states.map(s => ({ value: s.stateCode, label: s.stateName })) },
+            { key: "district", label: "Districts", type: "select", options: districts.map(d => ({ value: d.districtCode, label: d.districtName })) },
+          ].map((item) => (
+            <div key={item.key} className="grid grid-cols-2 border">
+              <div className="p-2"><Label text={item.label} required={item.key === "email"} /></div>
               <div className="p-2">
-                <Label
-                  text={
-                    field === "pincode"
-                      ? "Pincode"
-                      : field === "country"
-                      ? "Country"
-                      : field === "state"
-                      ? "State"
-                      : field === "district"
-                      ? "Districts"
-                      : field === "education"
-                      ? "Educational Status"
-                      : field === "phone"
-                      ? "Phone Number"
-                      : field === "mobile"
-                      ? "Mobile Number"
-                      : "Email-ID"
-                  }
-                  required={field === "email"}
-                />
-              </div>
-              <div className="p-2">
-                {field === "country" ? (
-                  <>
-                    <label className="mr-4">
-                      <input type="radio" name="country" value="India" checked={formData.country === 'India'} onChange={handleChange} /> India
+                {item.type === "radio" ? (
+                  item.options.map((val) => (
+                    <label key={val} className="mr-4">
+                      <input type="radio" name={item.key} value={val} checked={formData[item.key] === val} onChange={handleChange} /> {val}
                     </label>
-                    <label>
-                      <input type="radio" name="country" value="Other" checked={formData.country === 'Other'} onChange={handleChange} /> Other
-                    </label>
-                  </>
-                ) : field === "state" ? (
-                  <select name="state" value={formData.state} onChange={handleChange} className="w-full border p-2 rounded">
-                    <option value="Tripura">Tripura</option>
+                  ))
+                ) : item.type === "select" ? (
+                  <select name={item.key} value={formData[item.key]} onChange={handleChange} className="w-full border p-2 rounded">
+                    <option value="">Select</option>
+                    {item.options.map((opt, i) => (
+                      <option key={i} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
-                ) : field === "district" ? (
-                  <select name="district" value={formData.district} onChange={handleChange} className="w-full border p-2 rounded">
-                    <option value="West Tripura">West Tripura</option>
-                  </select>
-                ) : field === "education" ? (
-                  <>
-                    <label className="mr-4">
-                      <input type="radio" name="education" value="Literate" checked={formData.education === 'Literate'} onChange={handleChange} /> Literate
-                    </label>
-                    <label>
-                      <input type="radio" name="education" value="Illiterate" checked={formData.education === 'Illiterate'} onChange={handleChange} /> Illiterate
-                    </label>
-                  </>
                 ) : (
-                  <input
-                    type={field === "email" ? "email" : "text"}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                  />
+                  <input type="text" name={item.key} value={formData[item.key]} onChange={handleChange} className="w-full border p-2 rounded" />
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Education, Phone, Mobile, Email */}
+          {["education", "phone", "mobile", "email"].map((field) => (
+            <div key={field} className="grid grid-cols-2 border">
+              <div className="p-2"><Label text={field === "email" ? "Email-ID" : field === "mobile" ? "Mobile Number" : field === "phone" ? "Phone Number" : "Educational Status"} required={field === "email"} /></div>
+              <div className="p-2">
+                {field === "education" ? (
+                  ["Literate", "Illiterate"].map((status) => (
+                    <label key={status} className="mr-4">
+                      <input type="radio" name="education" value={status} checked={formData.education === status} onChange={handleChange} /> {status}
+                    </label>
+                  ))
+                ) : (
+                  <input type={field === "email" ? "email" : "text"} name={field} value={formData[field]} onChange={handleChange} className="w-full border p-2 rounded" />
                 )}
               </div>
             </div>
@@ -218,68 +212,46 @@ const RTIRequestForm = () => {
         </div>
       </div>
 
+      {/* REQUEST DETAILS */}
       <div className="border border-gray-300 p-4 rounded mb-6">
-        <h3 className="text-blue-700 font-semibold mb-4 text-lg">
-          Request Details :-
-        </h3>
+        <h3 className="text-blue-700 font-semibold mb-4 text-lg">Request Details :-</h3>
 
+        {/* Citizenship */}
         <div className="grid grid-cols-2 border">
           <div className="p-2 font-bold">Citizenship</div>
           <div className="p-2">
-            <select
-              name="citizenship"
-              value={formData.citizenship}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            >
+            <select name="citizenship" value={formData.citizenship} onChange={handleChange} className="w-full border p-2 rounded">
               <option value="Indian">Indian</option>
               <option value="Other">Other</option>
             </select>
           </div>
         </div>
 
+        {/* BPL */}
         <div className="grid grid-cols-2 border">
-          <div className="p-2 font-bold text-red-600">
-            * Is the Applicant Below Poverty Line ?
-          </div>
+          <div className="p-2 font-bold"><span className="text-red-600">*</span> <span className="text-black">Is the applicant below poverty line?</span></div>
           <div className="p-2">
-            <select
-              name="bpl"
-              value={formData.bpl}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-            >
+            <select name="bpl" value={formData.bpl} onChange={handleChange} className="w-full border p-2 rounded">
               <option value="No">No</option>
               <option value="Yes">Yes</option>
             </select>
-            {formData.bpl === "No" && (
-              <div className="text-red-600 text-sm mt-1">
-                You are required to pay the RTI fee of ₹ 10
-              </div>
-            )}
+            {formData.bpl === "No" && <div className="text-red-600 text-sm mt-1">You are required to pay the RTI fee of ₹ 10</div>}
           </div>
         </div>
 
-        <div className="border p-2 text-red-600 text-sm">
-          <div className="font-bold">
-            Note:- Only alphabets A-Z a-z number 0-9 and special characters , . - _ () / @ : & \ % are allowed in Text for RTI Request application.
-          </div>
+        {/* RTI Text */}
+        <div className="border border-red-500 text-red-600 text-sm font-bold p-2">
+          Note:- Only alphabets A-Z a-z number 0-9 and special characters , . - _ () / @ : & \ % are allowed in Text for RTI Request application.
         </div>
-
         <div className="grid grid-cols-2 border">
-          <div className="p-2 font-bold text-red-600">* Text for RTI Request application</div>
+          <div className="p-2 font-bold"><span className="text-red-600">*</span> <span className="text-black">Text for RTI Request application</span></div>
           <div className="p-2">
-            <textarea
-              name="rtiText"
-              value={formData.rtiText}
-              onChange={handleChange}
-              rows={5}
-              className="w-full border p-2 rounded"
-            ></textarea>
+            <textarea name="rtiText" value={formData.rtiText} onChange={handleChange} rows={5} className="w-full border p-2 rounded"></textarea>
             <div className="text-green-600 text-sm">{charCount}/3000 Characters entered</div>
           </div>
         </div>
 
+        {/* File Upload */}
         <div className="grid grid-cols-2 border">
           <div className="p-2 font-bold">
             Supporting document <span className="text-sm font-normal">(only pdf upto 1 MB)</span>
@@ -287,40 +259,30 @@ const RTIRequestForm = () => {
               Pdf file name should not have any blank space between any character. Special characters allowed are (a-zA-Z0-9-_)
             </p>
           </div>
-          <div className="p-2">
-            <input
-              type="file"
-              name="file"
-              accept="application/pdf"
-              onChange={handleChange}
-              className="border p-2 rounded"
-            />
+          <div className="p-2 flex items-center gap-2 border rounded">
+            <label className="bg-gray-200 px-4 py-1 rounded cursor-pointer hover:bg-gray-300">
+              Browse
+              <input type="file" name="file" accept="application/pdf" onChange={handleChange} className="hidden" />
+            </label>
+            <span className="text-sm">{formData.file?.name || "No file selected"}</span>
             {fileError && <div className="text-red-600 text-sm">{fileError}</div>}
           </div>
         </div>
 
+        {/* CAPTCHA */}
         <div className="grid grid-cols-2 border">
-          <div className="p-2 font-bold text-red-600">* Enter Captcha code</div>
+          <div className="p-2 font-bold"><span className="text-red-600">*</span> <span className="text-black">Enter Captcha code</span></div>
           <div className="p-2">
-            <div className="bg-gray-300 text-black font-bold px-3 py-1 inline-block mb-1">
-              {CAPTCHA_TEXT}
-            </div>
-            <input
-              type="text"
-              name="captcha"
-              value={formData.captcha}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              placeholder="Enter captcha here"
-            />
+            <div className="bg-gray-300 text-black font-bold px-3 py-1 inline-block mb-1">{CAPTCHA_TEXT}</div>
+            <input type="text" name="captcha" value={formData.captcha} onChange={handleChange} className="w-full border p-2 rounded" placeholder="Enter captcha here" />
             {captchaError && <div className="text-red-600 text-sm">{captchaError}</div>}
           </div>
         </div>
       </div>
 
       <div className="flex justify-center gap-4">
-        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded">Submit</button>
-        <button type="reset" className="bg-gray-300 text-black px-6 py-2 rounded">Reset</button>
+        <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:cursor-pointer">Submit</button>
+        <button type="reset" className="bg-gray-300 text-black px-6 py-2 rounded hover:cursor-pointer">Reset</button>
       </div>
     </form>
   );

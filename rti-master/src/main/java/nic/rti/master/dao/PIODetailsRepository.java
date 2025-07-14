@@ -1,6 +1,6 @@
 package nic.rti.master.repository;
 
-import com.example.piodatech.entity.PIODetails;
+import nic.rti.master.entity.PIODetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

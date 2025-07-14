@@ -1,4 +1,4 @@
-package nic.rti.master.repository;
+package nic.rti.master.dao;
 
 import nic.rti.master.entity.CommentsCPIO;
 import org.springframework.data.jpa.repository.JpaRepository;

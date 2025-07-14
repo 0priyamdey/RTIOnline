@@ -1,4 +1,4 @@
-package com.example.piodatech.entity;
+package nic.rti.master.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

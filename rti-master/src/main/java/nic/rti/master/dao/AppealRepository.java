@@ -1,6 +1,6 @@
-package nic.rti.master.repository;
+package nic.rti.master.dao;
 
-import com.example.piodatech.entity.Appeal;
+import nic.rti.master.entity.Appeal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

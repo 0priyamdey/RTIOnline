@@ -1,6 +1,6 @@
-package nic.rti.master.repository;
+package nic.rti.master.dao;
 
-import com.example.piodatech.entity.ReminderDPIO;
+import nic.rti.master.entity.ReminderDPIO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

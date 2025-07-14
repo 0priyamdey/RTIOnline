@@ -1,6 +1,6 @@
 package nic.rti.master.repository;
 
-import com.example.piodatech.entity.Request;
+import nic.rti.master.entity.Request;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

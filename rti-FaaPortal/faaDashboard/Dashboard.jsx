@@ -14,16 +14,24 @@ const userInfoData = {
 // Simulated backend JSON for dashboard cards (no icon property)
 const dashboardCardsData = [
   {
-    title: 'Appeal Pending <=10 Days',
+    title: 'Appeal Pending <= 10 Days',
     value: 10,
+    filter: 'pending10',
   },
   {
     title: 'New Appeal(s)',
     value: 12,
+    filter: 'new',
   },
   {
     title: 'Appeal Under Process',
     value: 5,
+    filter: 'underprocess',
+  },
+  {
+    title: 'Comments Received From PIO',
+    value: 2,
+    filter: 'comments',
   },
 ];
 
@@ -82,8 +90,20 @@ const Dashboard = () => {
         {/* Dashboard Cards (from JSON) */}
         <div className="dashboard-cards">
           {dashboardCardsData.map((card, idx) => (
-            <div className="dashboard-card" key={idx}>
-              <div className="dashboard-card-icon">📄</div>
+            <div
+              className="dashboard-card"
+              key={idx}
+              style={{ cursor: 'pointer' }}
+              onClick={() => window.location.href = `/appeals?filter=${card.filter}`}
+            >
+              <div className="dashboard-card-icon">
+                {/* Use a static envelope/message icon for all cards */}
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="18" r="18" fill="#FF9800"/>
+                  <path d="M10 13C10 11.8954 10.8954 11 12 11H24C25.1046 11 26 11.8954 26 13V23C26 24.1046 25.1046 25 24 25H12C10.8954 25 10 24.1046 10 23V13Z" fill="white"/>
+                  <path d="M10.5 13.5L18 19L25.5 13.5" stroke="#FF9800" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
               <div className="dashboard-card-content">
                 <h3>{card.title}</h3>
                 <p>{card.value}</p>

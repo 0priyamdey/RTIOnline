@@ -32,10 +32,11 @@ This folder contains the main components and assets for the FAA (First Appellate
 - **Fields:**
   - `title` (string)
   - `value` (number)
+  - The card icon is now a static SVG envelope/message icon, hardcoded in the JSX for all cards (not set via JSON).
 - **How to connect:**
   - Replace the static `dashboardCardsData` array with data fetched from your backend.
   - Use React's `useEffect` and `useState` to fetch and store the data.
-  - The card icon is currently hardcoded as 📄 for all cards. Change in JSX if needed.
+  - The icon is not configurable via JSON; it is hardcoded for visual consistency.
 
 ### 3. Example: Fetching Data from Backend
 ```jsx

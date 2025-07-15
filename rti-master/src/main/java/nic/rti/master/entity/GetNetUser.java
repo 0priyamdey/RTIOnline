@@ -61,4 +61,23 @@ public class GetNetUser {
 
     @Column(name = "StateName")
     private String stateName;
+
+    @Column(name = "UserType")
+    private String userType;
+
+    @Column(name = "ActivationKey")
+    private String activationKey;
+
+    @Column(name = "ActivationKeyConf")
+    private String activationKeyConf;
+
+    @Column(name = "LoginAttempts")
+    private Integer loginAttempts;
+
+    @Column(name = "LastSuccessfulLogin")
+    private java.sql.Timestamp lastSuccessfulLogin;
+
+    @Column(name = "LastUnSuccessfulLogin")
+    private java.sql.Timestamp lastUnSuccessfulLogin;
+    // TODO: Please review these fields and annotations. Adjust types or names as per your DB schema if needed.
 }

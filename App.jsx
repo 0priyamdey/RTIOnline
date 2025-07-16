@@ -1,24 +1,24 @@
-import React from 'react'
-import './App.css'
-import Header from './components/header'
-import LoginForm from './components/loginform'
-import Footer from './components/footer'
+import React from "react";
+import LoginPage from "./components/LoginPage";
+
+function App() {
+  return <LoginPage />;
+}
+
+export default App;
+
+
+/*
+import React from 'react';
+import DashboardPage from './components/DashboardPage';
 
 function App() {
   return (
-    <div className="app">
-      <Header />
-      <main className="main-content">
-        <div className="container">
-          <div className="login-section">
-            <h2 className="official-login-title">Official Login</h2>
-            <LoginForm />
-          </div>
-        </div>
-      </main>
-      <Footer />
+    <div>
+      <DashboardPage />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
+*/

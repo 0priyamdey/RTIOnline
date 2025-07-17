@@ -1,6 +1,6 @@
 package nic.rti.master.controller;
 
-package nic.rti.master.controller;
+//package nic.rti.master.controller;
 
 import nic.rti.master.entity.TblUser;
 import nic.rti.master.service.TblUserService;

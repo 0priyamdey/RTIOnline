@@ -1,0 +1,255 @@
+"use client"
+
+import type React from "react"
+
+import { useState, useMemo } from "react"
+
+export default function RTIPortal() {
+  const [currentPage, setCurrentPage] = useState(2)
+  const [entriesPerPage, setEntriesPerPage] = useState(10)
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const tableData = [
+    { id: 1, regNo: "GOTPCR/", name: "Test 1", date: "05-02-2025" },
+    { id: 2, regNo: "GOTPCR/", name: "Test 2", date: "04-02-2025" },
+    { id: 3, regNo: "GOTPCR", name: "Test 3", date: "01-02-2025" },
+    { id: 4, regNo: "GOTPCR/", name: "Test 4", date: "01-02-2025" },
+    { id: 5, regNo: "GOTPCR", name: "Test 5", date: "31-01-2025" },
+    { id: 6, regNo: "GOTPCR/", name: "Test 6", date: "31-01-2025" },
+    { id: 7, regNo: "GOTPCR/", name: "Test 7", date: "31-01-2025" },
+    { id: 8, regNo: "GOTPCR/", name: "Test 8", date: "30-01-2025" },
+    { id: 9, regNo: "GOTPCR/", name: "Test 9", date: "30-01-2025" },
+    { id: 10, regNo: "GOTPCR", name: "Test 10", date: "28-01-2025" },
+  ]
+
+  // Filter data based on search term
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return tableData
+
+    return tableData.filter(
+      (row) =>
+        row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.regNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.date.includes(searchTerm) ||
+        row.id.toString().includes(searchTerm),
+    )
+  }, [searchTerm])
+
+  // Calculate pagination for filtered data
+  const totalEntries = filteredData.length
+  const startEntry = Math.min((currentPage - 1) * entriesPerPage + 1, totalEntries)
+  const endEntry = Math.min(currentPage * entriesPerPage, totalEntries)
+  const totalPages = Math.ceil(totalEntries / entriesPerPage)
+
+  // Get current page data
+  const currentPageData = filteredData.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+
+  // Reset to first page when search changes
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value)
+    setCurrentPage(1)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {/* Top Header */}
+      <div className="bg-gray-800 text-white text-sm py-2 px-4 flex justify-between items-center">
+        <span>Skip to main content</span>
+        <div className="flex items-center gap-2">
+          <span>🌐 English</span>
+          <span>▼</span>
+        </div>
+      </div>
+
+      {/* Main Header */}
+      <div className="bg-white py-4 px-6 flex items-center justify-between border-b">
+        <div className="flex items-center gap-4">
+          {/* Government Logo */}
+          <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+            <div className="text-xs text-center">
+              GOV
+              <br />
+              LOGO
+            </div>
+          </div>
+
+          {/* RTI Logo */}
+          <div className="w-16 h-16 bg-blue-500 rounded flex items-center justify-center text-white">
+            <div className="text-xs text-center">
+              RTI
+              <br />
+              INFO
+            </div>
+          </div>
+
+          {/* Title */}
+          <div>
+            <h1 className="text-2xl font-bold text-blue-600">Right to Information Online Portal</h1>
+            <p className="text-sm text-gray-600">
+              An initiative of Administrative Reforms, Training, Pension and Public Grievances Department, Government of
+              Tripura
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="bg-blue-600 text-white">
+        <div className="flex">
+          {["HOME", "SEARCH", "ASSESSMENT", "MASTER UPDATION", "UTILITIES", "REPORT", "LOGIN HISTORY", "LOGOUT"].map(
+            (item) => (
+              <button key={item} className="px-6 py-3 hover:bg-blue-700 border-r border-blue-500 last:border-r-0">
+                {item}
+              </button>
+            ),
+          )}
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="p-6">
+        <h2 className="text-xl font-semibold text-center text-gray-700 mb-6">
+          Welcome to Nodal Officer Module of RTI-MIS
+        </h2>
+
+        {/* User Info */}
+        <div className="flex justify-between items-center mb-6 text-sm">
+          <span className="text-blue-600 font-medium">Public Authority: Tripura Public Service Commission</span>
+          <span className="text-blue-600 font-medium">Role : Nodal Officer</span>
+          <span className="text-blue-600 font-medium">User : SHRI A. BHATTACHERJEE</span>
+        </div>
+
+        {/* Table Controls */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Show</span>
+            <select
+              value={entriesPerPage}
+              onChange={(e) => {
+                setEntriesPerPage(Number(e.target.value))
+                setCurrentPage(1)
+              }}
+              className="border border-gray-300 px-2 py-1 text-sm"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            <span className="text-sm">entries</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm">Search:</span>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search in all columns..."
+              className="border border-gray-300 px-2 py-1 text-sm w-48 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white border border-gray-300">
+          <table className="w-full">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  S.No. <span className="text-blue-600">▲</span>
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  Edit <span className="text-blue-600">▲</span>
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  Registration Number <span className="text-blue-600">▲</span>
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  Name <span className="text-blue-600">▲</span>
+                </th>
+                <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  Received Date <span className="text-blue-600">▲</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentPageData.length > 0 ? (
+                currentPageData.map((row, index) => (
+                  <tr key={row.id} className={index % 2 === 0 ? "bg-blue-50" : "bg-white"}>
+                    <td className="border border-gray-300 px-4 py-2 text-sm">{row.id}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm">
+                      <input type="radio" name="edit" className="w-4 h-4" />
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm">{row.regNo}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm">
+                      <span className="text-blue-600 underline cursor-pointer">{row.name}</span>
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2 text-sm">{row.date}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                    No matching records found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-between items-center mt-4 bg-gray-200 px-4 py-2 text-sm">
+          <span>
+            {totalEntries > 0
+              ? `Showing ${startEntry} to ${endEntry} of ${totalEntries} entries${searchTerm ? " (filtered)" : ""}`
+              : "No entries to show"}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1 || totalEntries === 0}
+              className="disabled:text-gray-400 hover:text-blue-600 cursor-pointer disabled:cursor-not-allowed"
+            >
+              First
+            </button>
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1 || totalEntries === 0}
+              className="disabled:text-gray-400 hover:text-blue-600 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="bg-blue-600 text-white px-2 py-1 rounded">{currentPage}</span>
+            <button
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages || totalEntries === 0}
+              className="disabled:text-gray-400 hover:text-blue-600 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages || totalEntries === 0}
+              className="disabled:text-gray-400 hover:text-blue-600 cursor-pointer disabled:cursor-not-allowed"
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-blue-600 text-white text-center py-4 mt-8">
+        <p className="mb-2">
+          Contents of the portal is provided by Administrative Reforms, Training, Pension and Public Grievances
+          Department, Govt. of Tripura
+        </p>
+        <p className="text-sm">
+          Copyright © 2025. All Rights Reserved. This portal is Maintained by Tripura Information Commission and
+          Designed & Developed by National Informatics Centre, Tripura
+        </p>
+      </div>
+    </div>
+  )
+}
